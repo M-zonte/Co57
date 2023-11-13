@@ -45,7 +45,7 @@
 #include "TFile.h"
 #include "TH2F.h"
 #include "TMarker.h"
-#include "/opt/homebrew/Cellar/root/6.28.04_1/include/root/TLatex.h"
+#include "TLatex.h"
 #include "TPolyMarker.h"
 
 
