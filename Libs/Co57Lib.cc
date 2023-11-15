@@ -7,6 +7,8 @@
 
 #include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/Co57Lib.h"
 
+const double err_HVPowerSupply = 2.; //errore sul setting del voltaggio del power supply ad alta tensione
+
 // funzione per estrarre i dati dai file di testo del programma di lettura N957 di CAEN
 template <typename myType>
 vector<vector<myType>> readN957 (TString filepath)

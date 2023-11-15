@@ -122,6 +122,8 @@ template <typename myType>
 void printvec(vector<myType>, char opt = 'C');
 template <typename myType>
 void printvec(vector<pair<myType, myType>>, TString = "");
+template <typename myType>
+void printMultiVec(vector<vector<myType>> vec);
 
 template <typename myType>
 vector<int> findvec(vector<myType>, TString);
