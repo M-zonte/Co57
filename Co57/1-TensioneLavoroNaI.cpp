@@ -6,9 +6,9 @@
 //
 
 #include <iostream>
-#include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/myRootLib.cc"
-#include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/UtilityLib.cc"
-#include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/Co57Lib.cc"
+#include "Libs/myRootLib.h"
+#include "Libs/UtilityLib.h"
+#include "Libs/Co57Lib.h"
 using namespace std;
 
 
@@ -20,18 +20,21 @@ int main(int argc, char ** argv) {
     TString folder_filepath = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/1-TensioneLavoroNaI/";
     TString outputSpectrum = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Output/1-TensioneLavoroNaI.root";
     vector<vector<vector<int>>> data;
+    vector<int> times;
     vector<double> voltage;
     
     
     //lettura dei dati
     
-    for (int StartVoltage = 850; StartVoltage <= 1250; StartVoltage += 50) {
+    for (int StartVoltage = 700; StartVoltage <= 1250; StartVoltage += 50) {
         TString data_filepath = folder_filepath + to_string(StartVoltage) + ".txt";
         vector<vector<int>> voltage_dataset = readN957<int>(data_filepath);
+        
+        times.push_back(readTIME(data_filepath));
         data.push_back(voltage_dataset);
         voltage.push_back(StartVoltage);
     }
-    
+
     TFile *f = new TFile(outputSpectrum, "RECREATE");
     f->cd();
     
@@ -49,11 +52,17 @@ int main(int argc, char ** argv) {
     //ATTENZIONE! Tutti i parametri numerici sono stati attentamente calibrati per far convergere bene il fit quindi NON TOCCARE
     
     for (int i=0; i<data.size(); i++) {
-        TString name = "Bias Voltage: " + to_string(850 + i*50) + " Volt";
-        TH1I *spectrum = new TH1I(name, name, data.at(i).at(0).size(), 0, 8192);
+        TString name = "Bias Voltage: " + to_string(700 + i*50) + " Volt";
+        TH1D *spectrum = new TH1D(name, name, data.at(i).at(0).size(), 0, 8192);
+        //elimino tutti i punti minori di una certa soglia
         for (int binCount = 0; binCount < spectrum->GetNbinsX(); binCount++) {
-            spectrum->SetBinContent(binCount, data.at(i).at(2).at(binCount));
+            if (data.at(i).at(0).at(binCount) < 200) {
+                spectrum->SetBinContent(binCount, 0);
+            } else {
+                spectrum->SetBinContent(binCount, data.at(i).at(2).at(binCount));
+            }
         }
+        //noFondo(spectrum, times.at(i));
         int maxPeak = spectrum->GetMaximumBin();
         TF1 *peak_14keV = new TF1("14 keV", "gaus(0)", maxPeak-300, maxPeak+300);
         TF1 *double_peak = new TF1("double peak", "gaus(0) + gaus(3)", 2900, 7000);
@@ -77,7 +86,7 @@ int main(int argc, char ** argv) {
         TFitResultPtr *fitPtr_14 = new TFitResultPtr (spectrum->Fit(peak_14keV, "SRLQN"));
         TFitResultPtr *fitPtr_double = new TFitResultPtr (spectrum->Fit(double_peak, "SRLQN"));
         //con il primo fit trovo una prima stima dei parametri con il quale ridefinisco il range del TF1 con il quale fitto una seconda volta
-        peak_14keV->SetRange(peak_14keV->GetParameter(1)-peak_14keV->GetParameter(2)*1.8, peak_14keV->GetParameter(1)+peak_14keV->GetParameter(2)*2.2);
+        peak_14keV->SetRange(peak_14keV->GetParameter(1)-peak_14keV->GetParameter(2)*1.5, peak_14keV->GetParameter(1)+peak_14keV->GetParameter(2)*2.2);
         double_peak->SetRange(double_peak->GetParameter(1)-double_peak->GetParameter(2)*1.5, double_peak->GetParameter(4)+double_peak->GetParameter(5)*2.2);
         
         
@@ -102,12 +111,12 @@ int main(int argc, char ** argv) {
         cout << voltage.at(i) << ":\t" << par_14keV.at(i).first << "\t" << par_14keV.at(i).second << endl;
     }
     cout << endl;
-    cout << "122 keV peak" << endl;
+    cout << "iodine peak" << endl;
     for (int i=0; i<data.size(); i++) {
         cout << voltage.at(i) << ":\t" << par_doublepeak1.at(i).first << "\t" << par_doublepeak1.at(i).second << endl;
     }
     cout << endl;
-    cout << "136 keV peak" << endl;
+    cout << "122-136 keV peak" << endl;
     for (int i=0; i<data.size(); i++) {
         cout << voltage.at(i) << ":\t" << par_doublepeak2.at(i).first << "\t" << par_doublepeak2.at(i).second << endl;
     }
@@ -139,25 +148,15 @@ int main(int argc, char ** argv) {
     
     for (int i=0; i<data.size(); i++) {
         analysis_14keV->SetPoint(i, voltage.at(i), resolution.at(0).at(i));
-        analysis_14keV->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2)* err_resolution.at(0).at(i));
+        analysis_14keV->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2) * err_resolution.at(0).at(i) * resolution.at(0).at(i));
 
         analysis_1peak->SetPoint(i, voltage.at(i), resolution.at(1).at(i));
-        analysis_1peak->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2)* err_resolution.at(1).at(i));
+        analysis_1peak->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2) * err_resolution.at(1).at(i) * resolution.at(1).at(i));
 
         analysis_2peak->SetPoint(i, voltage.at(i), resolution.at(2).at(i));
-        analysis_2peak->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2)* err_resolution.at(2).at(i));
+        analysis_2peak->SetPointError(i, err_HVPowerSupply, 2*sqrt(2*M_LN2) * err_resolution.at(2).at(i) * resolution.at(2).at(i));
     }
-    /*
-    TApplication theApp("theApp", &argc, argv);
-    TCanvas c1;
-    analysis_14keV->Draw("AP");
-    TCanvas c2;
-    analysis_1peak->Draw("AP");
-    TCanvas c3;
-    analysis_2peak->Write("AP");
     
-    theApp.Run();
-    */
     analysis_14keV->Write();
     analysis_1peak->Write();
     analysis_2peak->Write();
