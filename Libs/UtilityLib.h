@@ -126,6 +126,9 @@ template <typename myType>
 void printMultiVec(vector<vector<myType>> vec);
 
 template <typename myType>
+vector<myType> constructARRAY(myType *);
+
+template <typename myType>
 vector<int> findvec(vector<myType>, TString);
 
 vector<TDatime> fillDate(const int, TDatime, const int); //per riempire un vettore di n posti con delle date a partire da una data passata come argomento incrementate tutte le volte di un numero di secondi dato da interval

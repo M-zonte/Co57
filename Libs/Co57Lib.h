@@ -8,12 +8,19 @@
 #ifndef Co57Lib_h
 #define Co57Lib_h
 
-#include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/UtilityLib.h"
+#include "Libs/UtilityLib.h"
 
 using namespace std;
 
+extern const double err_HVPowerSupply;
 
 template <typename myType>
 vector<vector<myType>> readN957 (TString);
 
+int readTIME (TString);
+int readEVENTS (TString);
+
+TH1* noFondo(TH1 *, int);
+
 #endif /* Co57Lib_hpp */
+

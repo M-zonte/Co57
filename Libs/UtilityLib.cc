@@ -3,9 +3,9 @@
 //
 //
 //  Created by Matteo Capitani on 03/05/22.
-//  test
+//  
 
-#include "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Libs/UtilityLib.h"
+#include "Libs/UtilityLib.h"
 
 using namespace std;
 
@@ -593,6 +593,14 @@ vector<int> findvec(vector<myType> vec, TString key)
     return found;
 }
 
+template <typename myType>
+vector<myType> constructARRAY(myType *array)
+{
+    int size = sizeof(*array) / sizeof(array[0]);
+    cout << size << endl;
+    vector<myType> vec(array, array+size);
+    return vec;
+}
 
 vector<TDatime> fillDate(const int size, TDatime startDate, const int interval)
 {
