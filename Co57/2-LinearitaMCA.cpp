@@ -6,10 +6,10 @@
 //
 
 #include <iostream>
-#include "Libs/UtilityLib.h"
-#include "Libs/UtilityLib.cc"
-#include "Libs/Co57Lib.h"
-#include "Libs/Co57Lib.cc"
+#include "Co57/Libs/UtilityLib.h"
+#include "Co57/Libs/UtilityLib.cc"
+#include "Co57/Libs/Co57Lib.h"
+#include "Co57/Libs/Co57Lib.cc"
 #include "TSpectrum.h"
 
 using namespace std;
@@ -20,9 +20,9 @@ int main(int argc, char ** argv) {
     clock_t t_begin;
     t_begin = clock();
     
-    TString input_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/nome esotico.txt";
-    TString output_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Output/2-LinearitaMCA.root";
-    TString voltage_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/voltage.txt";
+    TString input_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/nome esotico.txt";
+    TString output_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Output/2-Linearita.root";
+    TString voltage_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/voltage.txt";
     
     vector<vector<double>> data = readN957<double>(input_filename);
     vector<pair<double, double>> voltage = readPAIR<double>(voltage_filename);
@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
     TList *functions = MCA_Linearity->GetListOfFunctions();
     TPolyMarker *pm = (TPolyMarker*)functions->FindObject("TPolyMarker");
     
-    TFile *f = new TFile(output_filename, "RECREATE");
+    TFile *f = new TFile(output_filename, "UPDATE");
     f->cd();
     
     for (int i=0; i<peakFound; i++) {
@@ -68,16 +68,14 @@ int main(int argc, char ** argv) {
     }
     MCA_analysis->SetMarkerStyle(20);
     MCA_analysis->SetMarkerSize(0.7);
-    TF1 *fit = new TF1("Linearity", "pol1(0)", 1.5, 9.9);
+    TF1 *fit = new TF1("Linearity", "pol1(0)", 0, 10);
     gStyle->SetOptFit(1111);
     TFitResultPtr *fitPtr = new TFitResultPtr (MCA_analysis->Fit(fit, "SR+"));
     MCA_analysis->Draw("AP");
-    theApp.Run();
-    
     MCA_analysis->Write();
     
     f->Close();
-    
+    theApp.Run();
     t_begin = clock() - t_begin;
     cout << "Time Elapsed: " << (1.*t_begin/CLOCKS_PER_SEC) << " s" << endl;
     return 0;

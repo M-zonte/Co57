@@ -14,6 +14,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <ctime>
 #include <map>
 
@@ -47,11 +48,15 @@
 #include "TMarker.h"
 #include "TLatex.h"
 #include "TPolyMarker.h"
+#include "TROOT.h"
+#include <boost/algorithm/string/replace.hpp> //find&replace
+#include "THStack.h"
 
 
 
 using namespace std;
 using namespace TGeoUnit;
+using namespace boost;
 
 double RAD (double);
 double gaussiana (double, double, double);

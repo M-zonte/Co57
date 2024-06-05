@@ -6,10 +6,10 @@
 //
 
 #include <iostream>
-#include "Libs/UtilityLib.h"
-#include "Libs/UtilityLib.cc"
-#include "Libs/Co57Lib.h"
-#include "Libs/Co57Lib.cc"
+#include "Co57/Libs/UtilityLib.h"
+#include "Co57/Libs/UtilityLib.cc"
+#include "Co57/Libs/Co57Lib.h"
+#include "Co57/Libs/Co57Lib.cc"
 using namespace std;
 
 int main(int argc, char ** argv) {
@@ -17,9 +17,9 @@ int main(int argc, char ** argv) {
     clock_t t_begin;
     t_begin = clock();
     
-    TString input_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/4-LinearitàTAC/SpettroTAC.txt";
-    TString output_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Output/2-Linearita.root";
-    TString time_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/4-LinearitàTAC/TempiTAC.txt";
+    TString input_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/4-LinearitàTAC/SpettroTAC.txt";
+    TString output_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Output/2-Linearita.root";
+    TString time_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/4-LinearitàTAC/TempiTAC.txt";
     
     vector<vector<double>> data = readN957<double>(input_filename);
     vector<pair<double, double>> time = readPAIR<double>(time_filename);

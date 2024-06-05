@@ -6,10 +6,10 @@
 //
 
 #include <iostream>
-#include "Libs/UtilityLib.h"
-#include "Libs/UtilityLib.cc"
-#include "Libs/Co57Lib.h"
-#include "Libs/Co57Lib.cc"
+#include "Co57/Libs/UtilityLib.h"
+#include "Co57/Libs/UtilityLib.cc"
+#include "Co57/Libs/Co57Lib.h"
+#include "Co57/Libs/Co57Lib.cc"
 #include "TSpectrum.h"
 
 using namespace std;
@@ -20,26 +20,30 @@ int main(int argc, char ** argv) {
     clock_t t_begin;
     t_begin = clock();
     
-    TString input_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/nome esotico.txt";
-    TString output_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Output/2-LinearitaMCA.root";
-    TString voltage_filename = "/Users/matteocapitani/Desktop/Università/4 Anno/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/voltage.txt";
+    TString input_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/3-LinearitaCatena/linearitaCatena.txt";
+    TString output_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Output/2-Linearita.root";
+    TString voltage_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/3-LinearitaCatena/catena.txt";
     
     vector<vector<double>> data = readN957<double>(input_filename);
     vector<pair<double, double>> voltage = readPAIR<double>(voltage_filename);
     vector<double> media;
     vector<double> sigma;
     
-    TH1D *MCA_Linearity = new TH1D("MCA Linearity", "MCA Linearity", data.at(0).size(), 0, 8192);
+    TH1D *MCA_Linearity = new TH1D("Chain Linearity", "Chain Linearity", data.at(0).size(), 0, 8192);
 
     for (int i=0; i< data.at(0).size(); i++) {
-        MCA_Linearity->SetBinContent(i, data.at(2).at(i));
+        if (i < 250) {
+            MCA_Linearity->SetBinContent(i, 0.);
+        } else {
+            MCA_Linearity->SetBinContent(i, data.at(2).at(i));
+        }
     }
     
     int peakFound = MCA_Linearity->ShowPeaks(1, "noMarkov", 0.6);
     TList *functions = MCA_Linearity->GetListOfFunctions();
     TPolyMarker *pm = (TPolyMarker*)functions->FindObject("TPolyMarker");
     
-    TFile *f = new TFile(output_filename, "RECREATE");
+    TFile *f = new TFile(output_filename, "UPDATE");
     f->cd();
     
     for (int i=0; i<peakFound; i++) {
@@ -58,13 +62,13 @@ int main(int argc, char ** argv) {
     TCanvas *c = new TCanvas();
     c->cd();
     TGraphErrors *MCA_analysis = new TGraphErrors();
-    MCA_analysis->TNamed::SetNameTitle("MCA Analysis", "MCA Linearity Analysis");
+    MCA_analysis->TNamed::SetNameTitle("Chain Analysis", "Chain Linearity Analysis");
     MCA_analysis->GetXaxis()->SetTitle("Volt (V)");
     MCA_analysis->GetYaxis()->SetTitle("Channel");
     
     for (int i=0; i<voltage.size(); i++) {
         MCA_analysis->SetPoint(i, voltage.at(i).first, media.at(i));
-        MCA_analysis->SetPointError(i, voltage.at(i).second/64, sigma.at(i));
+        MCA_analysis->SetPointError(i, voltage.at(i).second/16, sigma.at(i));
     }
     MCA_analysis->SetMarkerStyle(20);
     MCA_analysis->SetMarkerSize(0.7);
@@ -72,12 +76,13 @@ int main(int argc, char ** argv) {
     gStyle->SetOptFit(1111);
     TFitResultPtr *fitPtr = new TFitResultPtr (MCA_analysis->Fit(fit, "SR+"));
     MCA_analysis->Draw("AP");
-    theApp.Run();
-    
     MCA_analysis->Write();
     
-    f->Close();
+    f->Close(); 
+    theApp.Run();
     
+    
+
     t_begin = clock() - t_begin;
     cout << "Time Elapsed: " << (1.*t_begin/CLOCKS_PER_SEC) << " s" << endl;
     return 0;
