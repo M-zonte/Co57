@@ -20,7 +20,7 @@ int main(int argc, char ** argv) {
     clock_t t_begin;
     t_begin = clock();
     
-    TString input_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/nome esotico.txt";
+    TString input_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/MCAlinearityREAL.txt";
     TString output_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Output/2-Linearita.root";
     TString voltage_filename = "/Users/matteocapitani/Desktop/Università/Magistrale/Laboratorio di Misure Nucleari/Co57/Data/2-LinearitaMCA/voltage.txt";
     
@@ -35,11 +35,11 @@ int main(int argc, char ** argv) {
         MCA_Linearity->SetBinContent(i, data.at(2).at(i));
     }
     
-    int peakFound = MCA_Linearity->ShowPeaks(1, "noMarkov", 0.6);
+    int peakFound = MCA_Linearity->ShowPeaks(1, "noMarkov", 0.4);
     TList *functions = MCA_Linearity->GetListOfFunctions();
     TPolyMarker *pm = (TPolyMarker*)functions->FindObject("TPolyMarker");
     
-    TFile *f = new TFile(output_filename, "UPDATE");
+    TFile *f = new TFile(output_filename, "RECREATE");
     f->cd();
     
     for (int i=0; i<peakFound; i++) {
@@ -50,7 +50,7 @@ int main(int argc, char ** argv) {
     }
     
     MCA_Linearity->Write();
-
+    
     sort(media.begin(), media.end());
     sort(sigma.begin(), sigma.end());
     
@@ -64,18 +64,18 @@ int main(int argc, char ** argv) {
     
     for (int i=0; i<voltage.size(); i++) {
         MCA_analysis->SetPoint(i, voltage.at(i).first, media.at(i));
-        MCA_analysis->SetPointError(i, voltage.at(i).second/32, sigma.at(i));
+        MCA_analysis->SetPointError(i, voltage.at(i).second, sigma.at(i));
     }
     MCA_analysis->SetMarkerStyle(20);
     MCA_analysis->SetMarkerSize(0.7);
-    TF1 *fit = new TF1("Linearity", "pol1(0)", 0, 10);
+    TF1 *fit = new TF1("Linearity", "pol1(0)", -0.3, 10);
     gStyle->SetOptFit(1111);
     TFitResultPtr *fitPtr = new TFitResultPtr (MCA_analysis->Fit(fit, "SR+"));
     MCA_analysis->Draw("AP");
     MCA_analysis->Write();
     
     f->Close();
-    theApp.Run();
+    //theApp.Run();
     t_begin = clock() - t_begin;
     cout << "Time Elapsed: " << (1.*t_begin/CLOCKS_PER_SEC) << " s" << endl;
     return 0;

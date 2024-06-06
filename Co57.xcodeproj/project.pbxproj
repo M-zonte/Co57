@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		970B89CB2C0F857D003ABC44 /* 5-TestTemperatura.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9758A44F2B4EDDF2008AA807 /* 5-TestTemperatura.cpp */; };
+		970B89D02C11E04E003ABC44 /* 4-LinearitaTAC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9762BD7F2B4449DD001E3A47 /* 4-LinearitaTAC.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		970B89CC2C0F8586003ABC44 /* temperatura23-24.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "temperatura23-24.txt"; sourceTree = "<group>"; };
+		970B89CE2C11DC16003ABC44 /* MCAlinearityREAL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = MCAlinearityREAL.txt; sourceTree = "<group>"; };
 		9758A44F2B4EDDF2008AA807 /* 5-TestTemperatura.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "5-TestTemperatura.cpp"; sourceTree = "<group>"; };
 		9758A4532B4EDDFC008AA807 /* 289.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 289.txt; sourceTree = "<group>"; };
 		9758A4542B4EDDFC008AA807 /* 504.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 504.txt; sourceTree = "<group>"; };
@@ -1856,6 +1857,7 @@
 		9784CDC12B0BB56900BA2258 /* 2-LinearitaMCA */ = {
 			isa = PBXGroup;
 			children = (
+				970B89CE2C11DC16003ABC44 /* MCAlinearityREAL.txt */,
 				97DF85762B14BD30002634F5 /* nome esotico.txt */,
 				97845FEA2B10EF01002EB139 /* voltage.txt */,
 				97845FE92B10EDF1002EB139 /* MCA_lin_1-10V.txt */,
@@ -2053,7 +2055,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				970B89CB2C0F857D003ABC44 /* 5-TestTemperatura.cpp in Sources */,
+				970B89D02C11E04E003ABC44 /* 4-LinearitaTAC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

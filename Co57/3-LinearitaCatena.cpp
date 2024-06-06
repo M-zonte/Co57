@@ -79,7 +79,7 @@ int main(int argc, char ** argv) {
     MCA_analysis->Write();
     
     f->Close(); 
-    theApp.Run();
+    //theApp.Run();
     
     
 

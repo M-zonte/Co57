@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
     cout << "Time Elapsed: " << (1.*t_begin/CLOCKS_PER_SEC) << " s" << endl;
     
     f->Close();
-    theApp.Run();
+    //theApp.Run();
     
     return 0;
 }
